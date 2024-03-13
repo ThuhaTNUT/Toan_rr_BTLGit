@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đếm số cách chọn một cặp giày</title>
+    <style>
+        h1{
+            color: #333;
+        }
+        button{
+            color: #333;
+            padding: 5px;
+            border-radius: 10px;
+            height: 40px;
+            background-color: lightblue;
+        }
+        button:hover{
+            background-color: rgba(85, 51, 5, 0.295);
+        }
+        p{
+            font-size: 20px;
+            color: #333;
+        }
+    </style>
+    <script>
+        
+        function countCombinations(){
+        //số lượng màu giày
+        var Somau = 5;
+        //số lượng kích cỡ
+        var kichco = 4;
+        //tính tổng số cách chọn một cặp giày
+        var totalCombinations = Somau * kichco;
+        //Hiển thị kết quả
+        var resultElement = document.getElementById("ketqua");
+        resultElement.innerHTML ="Cách chọn giày: " +totalCombinations ;
+    }
+    </script>
+</head>
+<body>
+    <h1>Đếm số cách chọn một cặp giày trong một cửa hàng giày có 5 màu và 4 kích cỡ</h1>
+    <div style="display: flex; justify-content: center; align-items: center;">
+         <button onclick="countCombinations()">Đếm số cách chọn</button>
+    </div>
+    <p>Để chọn một cặp giày trong một cửa hàng giày có 5 màu và 4 kích cỡ ta sẽ có: </p>
+    <p  id="ketqua"></p>
+</body>
+</html>

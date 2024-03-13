@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        button {
+            background-color: lightgray;
+            color: #333;
+            font-size: 20px;
+            border-radius: 10px;
+            padding: 3px;
+            height: 50px;
+            width: 150px;
+        }
+        button:hover{
+            background-color: orangered;
+        }
+        p{
+            font-size: 20px; 
+            color: #333;
+        }
+        #graph{
+            margin-left: 20px;
+            font-size: 20px;
+            color: #333;
+        }
+        #costs{
+            margin-left: 20px;
+            font-size: 20px;
+            color: #333;
+        }
+        #result{
+            font-size: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Sử dụng thuật toán DFS để: Tìm đường đi với chi phí tối thiểu</h1>
+<p>Cho ma trận đồ thị và ma trận chi phí sau, sử dụng thuật toán DFS để tìm đường đi với chi phí tối thiểu:</p>
+<!--ma trận đồ thị-->
+<div id="graph">
+    Đồ thị: <br>
+    <div>0, 1, 1, 0</div>
+    <div>1, 0, 1, 0</div>
+    <div>0, 1, 0, 1</div>
+    <div>1, 1, 0, 0</div>
+</div><br>
+<!--ma trận chi phí-->
+<div id="costs">
+    Chi phí: <br>
+    <div>0, 3, 11, 4</div>
+    <div>5, 0, 7,  8</div>
+    <div>2, 9, 0,  2</div>
+    <div>6, 4, 3,  0</div>
+</div>
+<p>Khi nhấp vào 'tìm đường đi' thì ma trận đường đi, ma trận chi phí và kết quả sẽ được hiển thị trên màn hình trình duyệt web</p>
+<!-- Khi nhấn nút này, hàm findMinCostPath() sẽ được gọi -->
+<div class="box">
+    <button onclick="findMinCostPath()">Tìm đường đi</button>
+</div>
+<!-- Kết quả sẽ được hiển thị ở đây -->
+<p id="result"></p>
+
+<script>
+class Stack {
+    constructor() {
+        this.items = [];
+    }
+
+    push(element) {
+        this.items.push(element);
+    }
+
+    pop() {
+        if (this.isEmpty()) return null;
+        return this.items.pop();
+    }
+
+    isEmpty() {
+        return this.items.length === 0;
+    }
+}
+
+// Hàm này sẽ tìm đường đi từ đỉnh bắt đầu đến đỉnh end với chi phí tối thiểu
+function dfsMinCostPath(graph, start, end, costs) {
+    let stack = new Stack();
+    let visited = new Array(graph.length).fill(false);
+    let minCost = { min: Infinity, path: [] };
+
+    stack.push({ vertex: start, path: [], cost: 0 });
+
+    while (!stack.isEmpty()) {
+        let { vertex, path, cost } = stack.pop();
+
+        visited[vertex] = true;
+        path.push(vertex);
+
+        if (vertex === end && cost < minCost.min) {
+            minCost.min = cost;
+            minCost.path = [...path];
+        }
+
+        for (let neighbor = graph.length - 1; neighbor >= 0; neighbor--) {
+            if (graph[vertex][neighbor] === 1 && !visited[neighbor]) {
+                stack.push({ vertex: neighbor, path: [...path], cost: cost + costs[vertex][neighbor] });
+            }
+        }
+    }
+
+    return minCost;
+}
+// Hàm này sẽ tìm và hiển thị đường đi với chi phí tối thiểu
+function findMinCostPath() {
+    let graph = [
+        [0, 1, 1, 0],
+        [1, 0, 1, 0],
+        [0, 1, 0, 1],
+        [1, 1, 0, 0]
+    ];
+
+    let costs = [
+        [0, 3, 11, 4],
+        [5, 0, 7,  8],
+        [2, 9, 0,  2],
+        [6, 4, 3,  0]
+    ];
+
+    let startVertex = 0;
+    let endVertex = 3;
+
+    let minCost = dfsMinCostPath(graph, startVertex, endVertex, costs);
+        //document.getElementById("graph").innerHTML = "<p>Đồ thị: </p>" + graph.map(row => row.join(", ")).join("<br>");
+        //document.getElementById("costs").innerHTML = "<p>Chi phí: </p>" + costs.map(row => row.join(", ")).join("<br>");
+        document.getElementById("result").innerHTML = "Đường đi với chi phí tối thiểu: " +minCost.path.join(" -> ") + ", chi phí = " +minCost.min;
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bài toán người du lịch</title>
+  <style>
+    button {
+      height: 40px;
+      border-radius: 10px;
+      background-color: brown;
+    }
+    button:hover{
+      background-color: gray;
+    }
+
+  </style>
+  <script>
+    var cities = ["T1", "T2", "T3", "T4", "T5", "T6", "T7"]; // Danh sách các thành phố
+    var n = cities.length; // Số lượng thành phố
+    var startCity = 0; // Thành phố xuất phát
+    var bestPath = []; // Hành trình tốt nhất
+    var bestCost = Infinity; // Tổng chi phí tốt nhất
+
+    // Ma trận chi phí
+    var costMatrix = [
+  [0,  15,  10,  2,   27,  30,  6 ],
+  [1,  0,   17,  9,   22,  20,  7 ],
+  [11, 4,   0,   18,  4,   12,  16],
+  [24, 32,  5,   0,   45,  8,   13],
+  [3,  23,  57,  54,  0,   35,  54],
+  [33, 3,   8,   7,   38,  0,   6 ],
+  [7,  70,  2,   10,  14,  28,  0 ]
+];
+
+   // Tìm hành trình tối ưu sử dụng thuật toán nhánh cận
+function findOptimalPath() {
+  var visited = Array(n).fill(false); // Mảng đánh dấu các thành phố đã được thăm
+  var path = [startCity]; // Mảng chứa hành trình
+  var cost = 0; // Tổng chi phí
+
+  var bestPath = null; // Hành trình tối ưu
+  var bestCost = Infinity; // Tổng chi phí tối ưu
+
+  // Hàm tính giới hạn dưới
+  function lowerBound(node, visited, path, cost) {
+    // Tính tổng chi phí từ hành trình hiện tại đến thành phố cuối cùng
+    var currentCity = path[path.length - 1];
+    for (var i = 0; i < n; i++) {
+      if (!visited[i]) {
+        cost += costMatrix[currentCity][i];
+      }
+    }
+
+    // Tính tổng chi phí từ thành phố cuối cùng đến thành phố xuất phát
+    cost += costMatrix[path[path.length - 1]][startCity];
+
+    // Tìm chi phí nhỏ nhất của các cạnh chưa được thăm
+    var minEdgeCost = Infinity;
+    for (var i = 0; i < n; i++) {
+      if (!visited[i] && costMatrix[currentCity][i] < minEdgeCost) {
+        minEdgeCost = costMatrix[currentCity][i];
+      }
+    }
+
+    // Trả về giới hạn dưới
+    return cost + minEdgeCost;
+  }
+
+  // Hàm đệ quy để tìm kiếm hành trình
+  function backtrack(node) {
+    visited[node] = true; // Đánh dấu thành phố đã thăm
+
+    // Nếu đã thăm qua tất cả các thành phố
+    if (path.length === n) {
+      // Tính tổng chi phí
+      cost += costMatrix[node][startCity];
+
+      // Nếu tổng chi phí tốt hơn chi phí tốt nhất hiện tại
+      if (cost < bestCost) {
+        // Lưu lại hành trình và tổng chi phí tốt nhất
+        bestCost = cost;
+        bestPath = path.slice();
+      }
+
+      // Đánh dấu thành phố hiện tại là chưa thăm
+      visited[node] = false;
+      return;
+    }
+
+    // Tính giới hạn dưới
+    var lowerBoundCost = lowerBound(node, visited, path, cost);
+
+    // Nếu giới hạn dưới lớn hơn chi phí tốt nhất hiện tại, không tiếp tục tìm kiếm
+    if (lowerBoundCost >= bestCost) {
+      visited[node] = false; // Đánh dấu thành phố hiện tại là chưa thăm
+      return;
+    }
+
+    // Thăm tất cả các thành phố chưa được thăm
+    for (var i = 0; i < n; i++) {
+      if (!visited[i]) {
+        path.push(i); // Thêm thành phố vào hành trình
+        cost += costMatrix[node][i]; // Tăng tổng chi phí
+        backtrack(i); // Tiếp tục tìm kiếm với thành phố tiếp theo
+        cost -= costMatrix[node][i]; // Giảm tổng chi phí
+        path.pop(); // Loại bỏ thành phố khỏi hành trình
+      }
+    }
+
+    // Đánh dấu thành phố hiện tại là chưa thăm
+    visited[node] = false;
+  }
+
+  // Gọi hàm backtrack với thành phố xuất phát
+  backtrack(startCity);
+
+  // Hiển thị kết quả
+  var result = "Hành trình tối ưu: ";
+  for (var i = 0; i < bestPath.length; i++) {
+    result += cities[bestPath[i]] + " -> ";
+  }
+  result += cities[startCity];
+  result += "<br>Tổng chi phí tối ưu: " + bestCost;
+  document.getElementById("result").innerHTML = result;
+}
+  </script>
+</head>
+<body>
+  <h1>Bài toán người du lịch:</h1>
+  <h2> Một người du lịch muốn đi tham quan thành phố T₁, T2, ..., T. Xuất phát 
+    từ nội thành phố nào đó người du lịch muốn đi qua tất cả các thành phố còn lại, mỗi thành phố 
+    đúng một lần, rồi quay trở lại thành phố xuất phát. Biết c, là chỉ phí đi từ thành phố 7, đến thành 
+    phố T, (i, j = 1, 2,..., n), hãy tìm hành trình (một cách đi thoả mãn điều kiện đặt ra) với tổng chi 
+    phí là nhỏ nhất.</h2>
+    <p style="font-size: 20px; color: #333;">Với ma trận chi phí sau đây:</p>
+    <div class="box">
+      <div>[0,  15,  10,  2,   27,  30,  6 ]</div>
+      <div>[1,  0,   17,  9,   22,  20,  7 ]</div>
+      <div>[11, 4,   0,   18,  4,   12,  16]</div>
+      <div>[24, 32,  5,   0,   45,  8,   13]</div>
+      <div>[3,  23,  57,  54,  0,   35,  54]</div>
+      <div>[33, 3,   8,   7,   38,  0,   60]</div>
+      <div>[7,  70,  2,   10,  14,  28,  0 ]</div>
+    </div><br>
+    <p style="font-size: 20px; color: #333;">Ta sẽ có hành trình tối ưu là:<br></p>
+  <div class="box">
+      <button onclick="findOptimalPath()">Tìm hành trình tối ưu </button>
+  </div>  <br>
+  <div id="result" style="font-size: 20px; color: #333;"></div>
+</body>
+</html>

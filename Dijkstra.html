@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Thuật toán Dijkstra</title>
+    <style>
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Thuật toán tìm kiếm Dijkstra</h1>
+        <p></p>
+        <button onclick="runDijkstra()">Tìm kiếm</button>
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+          // Biểu diễn đồ thị bằng danh sách kề
+      const graph = {
+          0: [{ node: 1, weight: 4 }, { node: 2, weight: 2 }],
+          1: [{ node: 3, weight: 5 }],
+          2: [{ node: 1, weight: 1 }, { node: 3, weight: 8 }],
+          3: [{ node: 4, weight: 3 }],
+          4: []
+      };
+
+      // Hàm thực hiện thuật toán Dijkstra
+      function dijkstra(graph, start) {
+          const distances = {};
+          const visited = {};
+          const queue = [];
+
+          // Khởi tạo khoảng cách từ đỉnh bắt đầu đến tất cả các đỉnh khác là vô cùng
+          for (let vertex in graph) {
+              distances[vertex] = Infinity;
+          }
+          distances[start] = 0;
+
+          // Đưa đỉnh bắt đầu vào hàng đợi
+          queue.push({ node: start, weight: 0 });
+
+          while (queue.length) {
+              // Lấy đỉnh có khoảng cách ngắn nhất từ hàng đợi
+              const { node, weight } = queue.shift();
+
+              // Đánh dấu đỉnh là đã thăm
+              visited[node] = true;
+
+              // Duyệt qua các đỉnh kề của đỉnh hiện tại
+              for (let neighbor of graph[node]) {
+                  // Nếu đỉnh kề chưa được thăm hoặc có khoảng cách ngắn hơn
+                  if (!visited[neighbor.node] && distances[neighbor.node] > distances[node] + neighbor.weight) {
+                      // Cập nhật khoảng cách ngắn nhất
+                      distances[neighbor.node] = distances[node] + neighbor.weight;
+                      // Thêm đỉnh vào hàng đợi để xét
+                      queue.push({ node: neighbor.node, weight: distances[neighbor.node] });
+                  }
+              }
+          }
+
+          return distances;
+      }
+
+      // Thực hiện thuật toán Dijkstra và in kết quả
+      const startVertex = 0;
+      const shortestDistances = dijkstra(graph, startVertex);
+      console.log("Khoảng cách ngắn nhất từ đỉnh", startVertex, "đến các đỉnh khác:", shortestDistances);
+    </script>
+</body>
+</html>

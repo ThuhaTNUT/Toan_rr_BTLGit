@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Thuật toán Kruskal</title>
+    <style>
+        #graph {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+        }
+        #result {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        #btnFind {
+            margin-top: 10px;
+            color: #333;
+            background-color: gray;
+            font-size: 18px;
+            border-radius: 10px;
+            height: 50px;
+        }
+        #btnFind:hover{
+          background-color: orangered;
+        }
+        .p{
+          font-size: 20px;
+          color: #333;
+        }
+        .box{
+          margin-left: 50px;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="color: #333;">Thuật toán Kruskal: Tìm cây khung nhỏ nhất</h1>
+    <p>Thực hiện ma trận sau dùng thuật toán Kruskal:</p>
+    <div class="box">
+      <div>0, 2, 0, 6, 0</div>
+      <div>2, 0, 3, 8, 5</div>
+      <div>8, 3, 0, 0, 9</div>
+      <div>0, 1, 9, 0, 3</div>
+      <div>2, 5, 1, 8, 0</div>
+    </div>
+    <p >Sau khi click chuột vào ô 'Tìm kết quả' kết quả sẽ được hiển thị bên dưới</p>
+
+    <!-- Đồ thị sẽ được hiển thị ở đây -->
+    <div id="graph"></div>
+
+    <!-- Nút button để tìm kết quả -->
+    <button id="btnFind">Tìm kết quả</button>
+
+    <!-- Kết quả sẽ được hiển thị ở đây -->
+    <div id="result"></div>
+
+    <script>
+        // Biểu diễn đồ thị bằng ma trận trọng số
+        const graph = [
+            [0, 2, 0, 6, 0],
+            [2, 0, 3, 8, 5],
+            [8, 3, 0, 0, 9],
+            [0, 1, 9, 0, 3],
+            [2, 5, 1, 8, 0]
+        ];
+
+        // Hàm thực hiện thuật toán Kruskal
+        function kruskal(graph) {
+            const n = graph.length;
+            const edges = [];
+
+            // Lấy danh sách các cạnh có trọng số từ ma trận trọng số
+            for (let i = 0; i < n; i++) {
+                for (let j = i + 1; j < n; j++) {
+                    if (graph[i][j] !== 0) {
+                        edges.push([i, j, graph[i][j]]);
+                    }
+                }
+            }
+
+            // Sắp xếp các cạnh theo trọng số
+            edges.sort((a, b) => a[2] - b[2]);
+
+            const parent = new Array(n).fill(-1);
+            const result = [];
+
+            function find(u) {
+                if (parent[u] === -1) return u;
+                return find(parent[u]);
+            }
+
+            function union(u, v) {
+                const rootU = find(u);
+                const rootV = find(v);
+                parent[rootU] = rootV;
+            }
+
+            let edgeCount = 0;
+            let i = 0;
+            while (edgeCount < n - 1) {
+                const [u, v, weight] = edges[i++];
+                const rootU = find(u);
+                const rootV = find(v);
+                if (rootU !== rootV) {
+                    result.push([u, v, weight]);
+                    union(u, v);
+                    edgeCount++;
+                }
+            }
+
+            return result;
+        }
+
+        // Lấy thẻ div để hiển thị đồ thị
+        const graphDiv = document.getElementById("graph");
+
+        // Hiển thị đồ thị trên trang web
+        function displayGraph() {
+            let html = "<h3>Đồ thị</h3>";
+            html += "<table>";
+            for (let i = 0; i < graph.length; i++) {
+                html += "<tr>";
+                for (let j = 0; j < graph[i].length; j++) {
+                    html += "<td>" + graph[i][j] + "</td>";
+                }
+                html += "</tr>";
+            }
+            html += "</table>";
+            graphDiv.innerHTML = html;
+        }
+
+        // Hiển thị kết quả thuật toán Kruskal trên trang web
+        function displayResult() {
+            const resultDiv = document.getElementById("result");
+            const kruskalResult = kruskal(graph);
+            let html = "<p>Kết quả của thuật toán Kruskal</p>";
+            html += "<ul>";
+            for (let i = 0; i < kruskalResult.length; i++) {
+                html += "<li>" + kruskalResult[i].join(" - ") + "</li>";
+            }
+            html += "</ul>";
+            resultDiv.innerHTML = html;
+        }
+        document.getElementById("btnFind").addEventListener("click", function() {
+            displayResult();
+        });
+      </script>
+</body>
+</html>

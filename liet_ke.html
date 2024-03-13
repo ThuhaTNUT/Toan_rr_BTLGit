@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Liệt kê tập hợp con</title>
+  <style>
+    .box{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    button{
+      width: 60px;
+      height: 40px;
+      background-color: blanchedalmond; 
+      border-radius: 10px; 
+      color: #333;
+    }
+    button:hover{
+      background-color: brown;
+    }
+    #output{
+      margin-left: 20px;
+
+    }
+    
+  </style>
+  <script>
+    function generateSubsets() {
+      var set = [1, 2, 3, 4];
+      var subsets = [[]];
+
+      for (var i = 0; i < set.length; i++) {
+        var currentSubsets = subsets.slice(); // Sao chép tất cả các tập hợp con hiện tại
+
+        // Thêm set[i] vào từng tập hợp con trong currentSubsets
+        for (var j = 0; j < currentSubsets.length; j++) {
+          currentSubsets[j] = currentSubsets[j].concat(set[i]);
+        }
+
+        // Thêm currentSubsets vào subsets
+        subsets = subsets.concat(currentSubsets);
+      }
+
+      // Hiển thị tất cả các tập hợp con
+      var output = document.getElementById("output");
+      output.innerHTML = "";
+      for (var k = 0; k < subsets.length; k++) {
+        output.innerHTML += subsets[k].join(", ") + "<br>";
+      }
+    }
+  </script>
+</head>
+<body>
+  <h1>Liệt kê tất cả các tập hợp con của tập {1, 2, 3, 4}</h1>
+  <p style="font-size: 20px; color: #333;">Các tập con của tập {1, 2, 3, 4} là: </p>
+  <div class="box">
+    <button onclick="generateSubsets()">Liệt kê</button>
+  </div>
+  <div id="output"></div>
+</body>
+</html>
